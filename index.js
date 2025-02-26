@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 
-const persons = [
+let persons = [
     { 
       "id": "1",
       "name": "Arto Hellas", 
@@ -41,6 +41,28 @@ app.get("/api/persons/:id", (req, res) => {
     } else {
         res.status(404).end();
     }
+});
+
+app.delete("/api/persons/:id", (req, res) => {
+    const id = req.params.id;
+    persons = persons.filter(person => person.id !== id);
+    res.status(204).end();
+});
+
+app.post("/api/persons", (req, res) => {
+    const body = req.body;
+    if (!body.name || !body.number) {
+        return res.status(400).json({
+            error: "name or number missing"
+        });
+    }
+    const person = {
+        name: body.name,
+        number: body.number,
+        id: Math.floor(Math.random() * 1000)
+    };
+    persons = persons.concat(person);
+    res.json(person);
 });
 
 const PORT = 3001;
